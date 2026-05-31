@@ -1,67 +1,41 @@
-# OpenCode Portal
+# OpenCode Telegram Bot
 
-![banner](/banner.png)
+> **Disclaimer**: This is a **personal project** and is **not related** to [https://github.com/sst/opencode](https://github.com/sst/opencode) or the SST team. It is a personal-built interface for interacting with OpenCode instances.
 
-> **Disclaimer**: This is a **personal project** and is **not related** to [https://github.com/sst/opencode](https://github.com/sst/opencode) or the SST team. This portal is a personal-built interface for interacting with OpenCode instances.
+A **Telegram bot** for [OpenCode](https://opencode.ai), the AI coding agent. It
+lets you drive OpenCode sessions entirely from Telegram — sending prompts,
+streaming replies, approving permissions, switching models, and viewing diffs —
+as a replacement for the original web UI.
 
-A web-based UI for [OpenCode](https://opencode.ai), the AI coding agent. This portal provides a browser interface to interact with OpenCode sessions, view messages, and chat with the AI assistant.
+The bot talks **directly** to a running `opencode serve` instance through the
+OpenCode SDK; there is no web server in between.
 
 ## Quick Start
 
-### Using bunx (Recommended)
+1. Create a bot with [@BotFather](https://t.me/BotFather) and copy the token.
+2. Configure the bot:
+   ```bash
+   cd apps/bot
+   cp .env.example .env
+   # set TELEGRAM_BOT_TOKEN, TELEGRAM_ALLOWED_IDS, OPENCODE_PORT
+   ```
+3. Start an OpenCode server in your project directory:
+   ```bash
+   opencode serve --port 4000
+   ```
+4. Run the bot from the repo root:
+   ```bash
+   bun install
+   bun run bot          # or: bun run bot:dev for watch mode
+   ```
 
-The easiest way to run OpenCode Portal is using bunx:
-
-```bash
-# Navigate to your project directory
-cd /path/to/your/project
-
-# Run OpenCode Portal
-bunx openportal
-```
-
-> **Note**: OpenPortal works best when paired with Bun. Node.js may have some rough edges.
-
-This will:
-
-- Start the OpenCode server (default port: 4000)
-- Start the web UI (default port: 3000)
-- Automatically find available ports if defaults are busy
+The bot uses long-polling, so no public URL is required — ideal for running on a
+VPS behind [Tailscale](https://tailscale.com). See [`apps/bot/README.md`](apps/bot/README.md)
+for the full command reference.
 
 ### Installation
 
 You can also install globally:
-
-```bash
-bun install -g openportal
-
-# Then run in any project directory
-openportal
-```
-
-### CLI Commands
-
-```bash
-openportal                    # Start OpenCode + Web UI
-openportal run                # Start only OpenCode server (no Web UI)
-openportal stop               # Stop running instances
-openportal list               # List running instances
-openportal clean              # Clean up stale entries
-```
-
-### CLI Options
-
-```bash
-openportal [command] [options]
-
-Options:
-  -h, --help              Show help message
-  -d, --directory <path>  Working directory (default: current directory)
-  -p, --port <port>       Web UI port (default: 3000, auto-finds if busy)
-  --opencode-port <port>  OpenCode server port (default: 4000, auto-finds if busy)
-  --hostname <host>       Hostname to bind (default: 0.0.0.0)
-  --name <name>           Instance name (default: directory name)
-```
 
 ### Prerequisites
 
@@ -75,48 +49,36 @@ bun install -g opencode
 brew install sst/tap/opencode
 ```
 
-## Overview
+## Commands
 
-OpenCode Portal connects to a running OpenCode server and provides:
+Send any text message to prompt the active session. Available commands:
 
-- Session management (create, view, delete sessions)
-- Real-time chat interface with the AI assistant
-- File mention support (`@filename` to reference files)
-- Model selection
-- Dark/light theme support
+- `/new`, `/sessions`, `/session <id>`, `/end` — session management
+- `/abort` (or the `✖ Annuler` button) — stop the running turn
+- `/model`, `/agent` — pick the model / agent per session
+- `/diff` — show uncommitted git changes
+- `/status`, `/health` — connection and session info
+- `/pair <token>` — enroll a new account
 
 ## Why This Project?
 
-OpenCode comes with its own official web UI that you can access by running:
-
-```bash
-opencode --port 4096
-```
-
-However, the official UI is **currently under development** and has some limitations:
-
-- Not mobile responsive
-- Limited mobile experience
-
-This project was inspired by my personal need to access OpenCode from my mobile device when I don't have my laptop around. The goal is to provide a mobile-first, responsive interface for interacting with OpenCode instances remotely.
+OpenCode ships an official web UI and TUI, but neither is convenient from a
+phone. This bot lets you start sessions, send prompts, approve tool permissions,
+switch models, and review diffs from anywhere via Telegram.
 
 ## Use Case
 
-This portal is designed for remote access to your OpenCode instance. Deploy the portal on a VPS alongside OpenCode, then use [Tailscale](https://tailscale.com) (or similar VPN) to securely connect from your mobile device or any other machine.
-
-**Example setup:**
-
-```
-[Your Phone] ---(Tailscale)---> [VPS running Portal + OpenCode]
-```
+Deploy the bot on a VPS alongside OpenCode and reach it from Telegram on any
+device. Because the bot uses long-polling, no inbound ports or public URL are
+required; running it behind [Tailscale](https://tailscale.com) keeps the
+OpenCode server private.
 
 ## Tech Stack
 
-- [React Router](https://reactrouter.com) - React framework
-- [IntentUI](https://intentui.com/) - UI library
-- [Tailwind CSS](https://tailwindcss.com) - Styling
-- [Nitro](https://nitro.build) - Server
-- [OpenCode SDK](https://www.npmjs.com/package/@opencode-ai/sdk) - OpenCode API client
+- [grammY](https://grammy.dev) - Telegram bot framework
+- [OpenCode SDK](https://www.npmjs.com/package/@opencode-ai/sdk) - OpenCode API client (v2)
+- [Bun](https://bun.sh) - Runtime & package manager
+- [Turborepo](https://turbo.build) - Monorepo tooling
 
 ## Contributing
 
