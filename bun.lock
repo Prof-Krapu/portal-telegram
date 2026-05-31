@@ -13,8 +13,12 @@
     },
     "apps/bot": {
       "name": "@portal/bot",
+      "bin": {
+        "opentelegram": "./src/cli.ts",
+      },
       "dependencies": {
         "@opencode-ai/sdk": "1.14.41",
+        "get-port-please": "^3.2.0",
         "grammy": "^1.30.0",
         "zod": "^4.4.3",
       },

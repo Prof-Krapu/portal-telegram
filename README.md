@@ -10,7 +10,37 @@ as a replacement for the original web UI.
 The bot talks **directly** to a running `opencode serve` instance through the
 OpenCode SDK; there is no web server in between.
 
-## Quick Start
+## Quick Start (recommended)
+
+Install with one command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Prof-Krapu/portal-telegram/claude/telegram-bot-migration-y3NzW/install.sh | bash
+```
+
+This installs Bun and OpenCode (if missing), builds a standalone `opentelegram`
+binary, and adds it to your `PATH`. Then, from **any** project folder:
+
+```bash
+opentelegram
+```
+
+The first run launches a short setup wizard (connect your Telegram bot, authorize
+your account). After that, `opentelegram` starts an OpenCode server bound to the
+current folder and brings the bot online for that workspace.
+
+| Command | Description |
+| --- | --- |
+| `opentelegram` | Start the bot for the current folder |
+| `opentelegram config` | Show the saved configuration |
+| `opentelegram --reconfigure` | Re-run the setup wizard |
+| `opentelegram stop` | Clear a stale single-instance lock |
+
+Only one `opentelegram` instance runs at a time (a Telegram long-polling
+constraint). It uses long-polling, so no public URL is required — ideal for a VPS
+behind [Tailscale](https://tailscale.com).
+
+## Manual / development setup
 
 1. Create a bot with [@BotFather](https://t.me/BotFather) and copy the token.
 2. Configure the bot:
@@ -29,13 +59,7 @@ OpenCode SDK; there is no web server in between.
    bun run bot          # or: bun run bot:dev for watch mode
    ```
 
-The bot uses long-polling, so no public URL is required — ideal for running on a
-VPS behind [Tailscale](https://tailscale.com). See [`apps/bot/README.md`](apps/bot/README.md)
-for the full command reference.
-
-### Installation
-
-You can also install globally:
+See [`apps/bot/README.md`](apps/bot/README.md) for the full command reference.
 
 ### Prerequisites
 

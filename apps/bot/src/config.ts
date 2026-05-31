@@ -104,3 +104,27 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): BotConfig {
     directory: parsed.OPENCODE_DIRECTORY || undefined,
   };
 }
+
+/**
+ * Build a BotConfig directly from explicit values (used by the `opentelegram`
+ * CLI, which already knows the token/ids/server URL and shouldn't re-read env).
+ */
+export function buildConfig(input: {
+  botToken: string;
+  allowedIds: Iterable<number>;
+  pairToken?: string;
+  opencodeBaseUrl: string;
+  directory?: string;
+}): BotConfig {
+  const pairTokenGenerated = !input.pairToken;
+  const pairToken = input.pairToken || randomBytes(12).toString("hex");
+
+  return {
+    botToken: input.botToken,
+    allowedIds: new Set(input.allowedIds),
+    pairToken,
+    pairTokenGenerated,
+    opencodeBaseUrl: input.opencodeBaseUrl.replace(/\/$/, ""),
+    directory: input.directory || undefined,
+  };
+}
